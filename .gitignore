@@ -1,0 +1,6 @@
+#IDEA Project Files
+.idea
+
+#CSharp folders
+bin/
+obj/
