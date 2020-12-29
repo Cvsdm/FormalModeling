@@ -7,12 +7,15 @@ namespace MiniProjectFM
     {
         private string Name { get; set; }
 
+        private Service Service { get; set; }
+
         /**
          * Patient constructor including its name
          */
-        public Patient(string name)
+        public Patient(string name, Service service)
         {
             Name = name;
+            Service = service;
         }
 
         /**

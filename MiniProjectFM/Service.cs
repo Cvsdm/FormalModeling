@@ -2,7 +2,7 @@
 {
     public class Service
     {
-        private string Name { get; set; }
+        public string Name { get; private set; }
         private ResourceManager _manager;
 
         private int AvailableSeatInWaitingRoom { get; set; }
@@ -42,6 +42,9 @@
         }
 
 
+        /**
+         * Constructor of Service
+         */
         public Service(ResourceManager manager, string name)
         {
             _manager = manager;
@@ -53,6 +56,14 @@
             AvailableEmergencyRoom = 5;
             AvailablePhysicians = 5;
             NumberOfPatientInsideService = 0;
+        }
+        
+        /**
+         * Loop function to listen to events
+         */
+        public void Loop()
+        {
+            
         }
     }
 }
