@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace MiniProjectFM
 {
@@ -6,7 +9,10 @@ namespace MiniProjectFM
     {
         private int RoomBuffer { get; set; }
         private int PhysicianBuffer { get; set; }
-
+        
+        private Semaphore Semaphore { get; set; }
+        
+        private ConcurrentQueue<Message> Queue { get; set; }
         /**
          * Constructor of Resource Manager
          */
@@ -57,13 +63,26 @@ namespace MiniProjectFM
             PhysicianBuffer++;
             return true;
         }
+        
+        /**
+         * Function used by services to send a message to the manager
+         */
+        public void SendMessage(Message message)
+        {
+            Queue.Enqueue(message);
+            Semaphore.Release();
+        }
 
         /**
          * Loop function to listen to events
          */
         public void Loop()
         {
-            
+            Message message;
+            while (true)
+            {
+                
+            }
         }
     }
 }

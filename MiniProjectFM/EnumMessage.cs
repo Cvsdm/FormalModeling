@@ -1,6 +1,6 @@
 ﻿namespace MiniProjectFM
 {
-    public enum MessageType
+    public enum EnumMessage
     {
         askSeatInWaitingRoom,
         releaseSeatInWaitingRoom,
@@ -22,6 +22,6 @@
 
         patientCheckout,
 
-        terminateProgram
+        endJob
     }
 }

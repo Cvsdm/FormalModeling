@@ -115,7 +115,7 @@ namespace MiniProjectFM
 
         private void WriteAction(string message)
         {
-            Console.WriteLine($"{Name} {message}");
+            Console.WriteLine("{0} {1}", Name, message);
         }
     }
 }

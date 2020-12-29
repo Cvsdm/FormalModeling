@@ -5,12 +5,13 @@ using System.Threading;
 
 namespace MiniProjectFM
 {
-    internal class Program
+    internal static class Program
     {
-        private static string[] _patientNames =
+        // Variable representing the names of the patient to come into the hospital
+        private static readonly string[] PatientNames =
         {
-            "Elise", "Julie", "Jean-Paul", "Chloe", "Jacques", "Celine", "John", "Antony", "Patrick", "Jennifer",
-            "Thomas", "Clement", "Sophia", "Emmanuel", "Edouard", "Philippe", "Lisa", "Will", "Katie"
+            "Elise", "Katie", "Julie", "Jean-Paul", "Chloe", "Jacques", "Celine", "John", "Antony", "Patrick", "Jennifer",
+            "Thomas", "Clement", "Sophia", "Emmanuel", "Edouard", "Philippe", "Lisa", "Will"
         };
 
         public static void Main(string[] args)
@@ -32,7 +33,7 @@ namespace MiniProjectFM
             };
             foreach (var service in services)
             {
-                var servicesThread = new Thread(service.Loop) {Name = s.Name};
+                var servicesThread = new Thread(service.Loop) {Name = service.Name};
                 servicesThread.Start();
             }
             
@@ -40,17 +41,25 @@ namespace MiniProjectFM
             // Create the patients threads
             var patients = new List<Thread>();
             
-            foreach (var name in _patientNames)
+            foreach (var name in PatientNames)
             {
                 var randomService = rand.Next(0, services.Length);
                 var p = new Patient(name, services[randomService]);
                 var thread = new Thread(p.EmergencyJourney) {Name = name};
                 patients.Add(thread);
                 thread.Start();
-                Thread.Sleep(1000);
+                // we create a random between 0 and 6 minutes for the arrival of new patient
+                var arrivalTime = rand.Next(0, 6000);
+                Thread.Sleep(arrivalTime);
             }
-            foreach(var t in patients)
-                t.Join();
+            
+            // We wait for the patient thread to terminate one by one
+            foreach(var thread in patients)
+                thread.Join();
+            
+            // We stop the services threads
+            
+            // We stop the manager thread
 
         }
     }
