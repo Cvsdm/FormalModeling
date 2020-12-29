@@ -3,9 +3,11 @@ using System.Threading;
 
 namespace MiniProjectFM
 {
-    public class Patient
+    public class Patient: ISender
     {
-        private string Name { get; set; }
+        public string Name { get; private set; }
+        public Semaphore WaitingResponse { get; set; }
+        public bool? IsDemandAccepted { get; set; }
 
         private Service Service { get; set; }
 
@@ -47,7 +49,23 @@ namespace MiniProjectFM
             Thread.Sleep(5000);
 
             // check if the patient can enter the WR or not
-            return false;
+            Service.SendMessage(new Message(this, EnumMessage.askSeatInWaitingRoom));
+            
+            // Wait for service response
+            WaitingResponse.WaitOne();
+            switch (IsDemandAccepted)
+            {
+                case true:
+                    IsDemandAccepted = null;
+                    WriteAction("was admitted");
+                    return true;
+                case false:
+                    IsDemandAccepted = null;
+                    WriteAction("was rejected");
+                    return false;
+                default:
+                    throw new Exception("receive null accepted demand");
+            }
         }
 
         /**
@@ -55,12 +73,16 @@ namespace MiniProjectFM
          */
         private void NurseStartProcessPaperwork()
         {
+            WriteAction("is starting to fill his paperwork");
             // wait for the patient to fill out paperwork - we consider 5 minutes so here 5 sec
             Thread.Sleep(5000);
-
+            WriteAction("finished his paperwork");
+            
+            
             // wait for a nurse to be available
             // acquire a nurse
-            //TODO
+            Service.SendMessage(new Message(this, EnumMessage.askNurse));
+            WaitingResponse.WaitOne();
             WriteAction("- the nurse start to process his paperwork");
         }
 
@@ -73,7 +95,8 @@ namespace MiniProjectFM
             Thread.Sleep(5000);
 
             // liberate a nurse
-            //TODO
+            Service.SendMessage(new Message(this, EnumMessage.releaseNurse));
+            WaitingResponse.WaitOne();
             WriteAction("- the nurse has finished to process his paperwork");
         }
 
@@ -84,7 +107,10 @@ namespace MiniProjectFM
         {
             // wait for an ER to be available
             // acquire the ER resource
-            // TODO
+            WriteAction("waits for a free ER");
+            Service.SendMessage(new Message(this, EnumMessage.acquireEmergencyRoom));
+            WaitingResponse.WaitOne();
+
             WriteAction("enters the ER");
         }
 
@@ -95,6 +121,9 @@ namespace MiniProjectFM
         {
             // wait for a physician to be available
             // acquire the resource
+            WriteAction("waits for a physician");
+            Service.SendMessage(new Message(this, EnumMessage.acquirePhysician));
+            WaitingResponse.WaitOne();
 
             WriteAction("starts to be examined");
         }
@@ -106,9 +135,15 @@ namespace MiniProjectFM
         {
             // wait for the end of examination - we consider 10 min so 10 sec
             Thread.Sleep(10000);
-            // release the resource ER
+            WriteAction("has finished to be examined");
 
             // release the resource Physician
+            Service.SendMessage(new Message(this, EnumMessage.releasePhysician));
+            WaitingResponse.WaitOne();
+            
+            // release the resource ER
+            Service.SendMessage(new Message(this, EnumMessage.releaseEmergencyRoom));
+            WaitingResponse.WaitOne();
 
             WriteAction("leaves the hospital");
         }

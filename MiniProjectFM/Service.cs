@@ -16,6 +16,8 @@ namespace MiniProjectFM
         private int AvailableEmergencyRoom { get; set; }
         private int AvailablePhysicians { get; set; }
 
+        private ConcurrentQueue<Message> Queue { get; set; }
+        private Semaphore Semaphore { get; set; }
 
         private int _numberOfPatientInsideService;
 
@@ -65,8 +67,13 @@ namespace MiniProjectFM
             NumberOfPatientInsideService = 0;
         }
 
-        public void getMessage(Message message)
+        /**
+         * Function used by patients to send a message to the service
+         */
+        public void SendMessage(Message message)
         {
+            Queue.Enqueue(message);
+            Semaphore.Release();
         }
 
 
