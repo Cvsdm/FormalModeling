@@ -7,7 +7,7 @@ namespace MiniProjectFM
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Welcome into the emergency room");
+            Console.WriteLine("Welcome into the emergency room - You will enter our simulation");
         }
     }
 }
