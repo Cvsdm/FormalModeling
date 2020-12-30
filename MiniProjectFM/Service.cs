@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace MiniProjectFM
@@ -15,6 +16,8 @@ namespace MiniProjectFM
         private int AvailableNurses { get; set; }
         private int AvailableEmergencyRoom { get; set; }
         private int AvailablePhysicians { get; set; }
+
+        private Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
 
         private ConcurrentQueue<Message> Queue { get; set; }
         private Semaphore Semaphore { get; set; }
@@ -35,8 +38,8 @@ namespace MiniProjectFM
                 while (AvailableEmergencyRoom > 1)
                 {
                     // Give Room to ResourceManager
-                    // TODO
-
+                    _manager.SendMessage(new Message(this, EnumMessage.DonateEmergencyRoom));
+                    WaitingResponse.WaitOne();
                     AvailableEmergencyRoom--;
                 }
 
@@ -44,7 +47,8 @@ namespace MiniProjectFM
                 while (AvailablePhysicians > 1)
                 {
                     // Give Physician to ResourceManager
-                    // TODO
+                    _manager.SendMessage(new Message(this, EnumMessage.DonatePhysician));
+                    WaitingResponse.WaitOne();
                     AvailablePhysicians--;
                 }
             }
@@ -65,6 +69,23 @@ namespace MiniProjectFM
             AvailableEmergencyRoom = 5;
             AvailablePhysicians = 5;
             NumberOfPatientInsideService = 0;
+
+            // Initialize queue and semaphore
+            Semaphore = new Semaphore(0, int.MaxValue);
+            Queue = new ConcurrentQueue<Message>();
+            WaitingResponse = new Semaphore(0, 1);
+
+            // Initialize execution function
+            ExecutorArray = new Dictionary<EnumMessage, Func<bool>>(8)
+            {
+                {EnumMessage.ReleaseSeatInWaitingRoom, ReleaseSeatInWaitingRoom},
+                {EnumMessage.AskNurse, GetNurse},
+                {EnumMessage.AcquireEmergencyRoom, GetEmergencyRoom},
+                {EnumMessage.ReleaseEmergencyRoom, ReleaseEmergencyRoom},
+                {EnumMessage.AcquirePhysician, GetPhysician},
+                {EnumMessage.ReleasePhysician, ReleasePhysician},
+                {EnumMessage.PatientLeaves, PatientLeaves}
+            };
         }
 
         /**
@@ -76,12 +97,35 @@ namespace MiniProjectFM
             Semaphore.Release();
         }
 
+        private void ExecutorFunction(EnumMessage type, ISender sender)
+        {
+            // launch the function corresponding to the type of message
+            var result = ExecutorArray[type]();
+
+            // send response to sender
+            sender.IsDemandAccepted = result;
+            sender.WaitingResponse.Release();
+        }
+
 
         /**
          * Loop function to listen to events
          */
         public void Loop()
         {
+            while (true)
+            {
+                Message message;
+                Semaphore.WaitOne();
+                if (Queue.TryDequeue(out message) == true)
+                {
+                    Console.WriteLine("\t Service needs to do {0} for {1}", message.Type, message.Sender.Name);
+                    var sender = (Patient) message.Sender;
+                    if (message.Type == EnumMessage.EndJob)
+                        return;
+                    ExecutorFunction(message.Type, sender);
+                }
+            }
         }
 
         /**
@@ -93,6 +137,7 @@ namespace MiniProjectFM
             if (AvailableSeatInWaitingRoom <= 0 || rand.Next(0, 99) <= 10) return false;
 
             AvailableSeatInWaitingRoom--;
+            _numberOfPatientInsideService++;
             return true;
         }
 
@@ -138,8 +183,8 @@ namespace MiniProjectFM
             }
 
             // Check if the Resource Manager has a room for us
-            _manager.SendMessage(new Message(this, EnumMessage.requestEmergencyRoom));
-            
+            _manager.SendMessage(new Message(this, EnumMessage.RequestEmergencyRoom));
+
             WaitingResponse.WaitOne();
 
             switch (IsDemandAccepted)
@@ -177,7 +222,7 @@ namespace MiniProjectFM
             }
 
             // No physician is available in the service Thus we can ask the resource manager
-            _manager.SendMessage(new Message(this, EnumMessage.requestPhysician));
+            _manager.SendMessage(new Message(this, EnumMessage.RequestPhysician));
 
             // Wait for the response of the manager
             WaitingResponse.WaitOne();

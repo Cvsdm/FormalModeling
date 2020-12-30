@@ -7,9 +7,9 @@ namespace MiniProjectFM
      */
     public class Message
     {
-        private EnumMessage Type { get; set; }
+        public EnumMessage Type { get; set; }
 
-        private ISender Sender { get; set; }
+        public ISender Sender { get; set; }
         
         public Message(ISender sender, EnumMessage type)
         {

@@ -2,26 +2,26 @@
 {
     public enum EnumMessage
     {
-        askSeatInWaitingRoom,
-        releaseSeatInWaitingRoom,
+        AskSeatInWaitingRoom,
+        ReleaseSeatInWaitingRoom,
 
-        askNurse,
-        releaseNurse,
+        AskNurse,
+        ReleaseNurse,
 
-        acquireEmergencyRoom,
-        releaseEmergencyRoom,
+        AcquireEmergencyRoom,
+        ReleaseEmergencyRoom,
         
-        requestEmergencyRoom,
-        donateEmergencyRoom,
+        RequestEmergencyRoom,
+        DonateEmergencyRoom,
 
-        acquirePhysician,
-        releasePhysician,
+        AcquirePhysician,
+        ReleasePhysician,
 
-        requestPhysician,
-        donatePhysician,
+        RequestPhysician,
+        DonatePhysician,
 
-        patientCheckout,
+        PatientLeaves,
 
-        endJob
+        EndJob
     }
 }

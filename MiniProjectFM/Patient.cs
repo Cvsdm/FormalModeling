@@ -49,7 +49,7 @@ namespace MiniProjectFM
             Thread.Sleep(5000);
 
             // check if the patient can enter the WR or not
-            Service.SendMessage(new Message(this, EnumMessage.askSeatInWaitingRoom));
+            Service.SendMessage(new Message(this, EnumMessage.AskSeatInWaitingRoom));
             
             // Wait for service response
             WaitingResponse.WaitOne();
@@ -81,7 +81,7 @@ namespace MiniProjectFM
             
             // wait for a nurse to be available
             // acquire a nurse
-            Service.SendMessage(new Message(this, EnumMessage.askNurse));
+            Service.SendMessage(new Message(this, EnumMessage.AskNurse));
             WaitingResponse.WaitOne();
             WriteAction("- the nurse start to process his paperwork");
         }
@@ -95,7 +95,7 @@ namespace MiniProjectFM
             Thread.Sleep(5000);
 
             // liberate a nurse
-            Service.SendMessage(new Message(this, EnumMessage.releaseNurse));
+            Service.SendMessage(new Message(this, EnumMessage.ReleaseNurse));
             WaitingResponse.WaitOne();
             WriteAction("- the nurse has finished to process his paperwork");
         }
@@ -108,7 +108,7 @@ namespace MiniProjectFM
             // wait for an ER to be available
             // acquire the ER resource
             WriteAction("waits for a free ER");
-            Service.SendMessage(new Message(this, EnumMessage.acquireEmergencyRoom));
+            Service.SendMessage(new Message(this, EnumMessage.AcquireEmergencyRoom));
             WaitingResponse.WaitOne();
 
             WriteAction("enters the ER");
@@ -122,7 +122,7 @@ namespace MiniProjectFM
             // wait for a physician to be available
             // acquire the resource
             WriteAction("waits for a physician");
-            Service.SendMessage(new Message(this, EnumMessage.acquirePhysician));
+            Service.SendMessage(new Message(this, EnumMessage.AcquirePhysician));
             WaitingResponse.WaitOne();
 
             WriteAction("starts to be examined");
@@ -138,11 +138,11 @@ namespace MiniProjectFM
             WriteAction("has finished to be examined");
 
             // release the resource Physician
-            Service.SendMessage(new Message(this, EnumMessage.releasePhysician));
+            Service.SendMessage(new Message(this, EnumMessage.ReleasePhysician));
             WaitingResponse.WaitOne();
             
             // release the resource ER
-            Service.SendMessage(new Message(this, EnumMessage.releaseEmergencyRoom));
+            Service.SendMessage(new Message(this, EnumMessage.ReleaseEmergencyRoom));
             WaitingResponse.WaitOne();
 
             WriteAction("leaves the hospital");
