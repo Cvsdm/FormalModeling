@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace MiniProjectFM
+namespace ProjectFM
 {
     public class Patient: ISender
     {

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniProjectFM", "MiniProjectFM\MiniProjectFM.csproj", "{59FD31A9-D595-4357-A590-15806EAA01EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectFM", "ProjectFM\ProjectFM.csproj", "{59FD31A9-D595-4357-A590-15806EAA01EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace MiniProjectFM
+namespace ProjectFM
 {
     public interface ISender
     {

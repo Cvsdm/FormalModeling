@@ -1,4 +1,4 @@
-﻿namespace MiniProjectFM
+﻿namespace ProjectFM
 {
     public enum EnumMessage
     {

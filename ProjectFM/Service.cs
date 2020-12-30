@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace MiniProjectFM
+namespace ProjectFM
 {
     public class Service : ISender
     {
@@ -26,7 +27,7 @@ namespace MiniProjectFM
 
         private int NumberOfPatientInsideService
         {
-            get => _numberOfPatientInsideService;
+            get { return _numberOfPatientInsideService; }
             set
             {
                 _numberOfPatientInsideService = value;

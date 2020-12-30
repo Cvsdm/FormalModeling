@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace MiniProjectFM
+namespace ProjectFM
 {
     public class ResourceManager
     {

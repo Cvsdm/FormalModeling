@@ -7,9 +7,9 @@
     <ProjectGuid>{59FD31A9-D595-4357-A590-15806EAA01EF}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MiniProjectFM</RootNamespace>
-    <AssemblyName>MiniProjectFM</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>ProjectFM</RootNamespace>
+    <AssemblyName>ProjectFM</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
