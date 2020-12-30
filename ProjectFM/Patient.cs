@@ -18,6 +18,9 @@ namespace ProjectFM
         {
             Name = name;
             Service = service;
+            
+            // Initialize Semaphore
+            WaitingResponse = new Semaphore(0, 1);
         }
 
         /**

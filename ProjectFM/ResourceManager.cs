@@ -109,13 +109,12 @@ namespace ProjectFM
             {
                 Message message;
                 Semaphore.WaitOne();
-                if (Queue.TryDequeue(out message) == true)
+                if (Queue.TryDequeue(out message))
                 {
                     Console.WriteLine("\t Manager needs to do {0} for {1}", message.Type, message.Sender.Name);
-                    var sender = (Service) message.Sender;
                     if (message.Type == EnumMessage.EndJob)
                         return;
-                    ExecutorFunction(message.Type, sender);
+                    ExecutorFunction(message.Type, message.Sender);
                 }
             }
         }

@@ -14,5 +14,10 @@
             Sender = sender;
             Type = type;
         }
+
+        public override string ToString()
+        {
+            return "Message : " + Type + " by " + Sender.Name;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -23,7 +23,6 @@ namespace ProjectFM
             var managerThread = new Thread(manager.Loop) {Name = "Manager"};
             managerThread.Start();
             
-
             // Create the services threads
             Service[] services =
             {
@@ -57,9 +56,13 @@ namespace ProjectFM
                 thread.Join();
             
             // We stop the services threads
+            foreach (var service in services)
+            {
+                service.SendMessage(new Message(null, EnumMessage.EndJob));
+            }
             
             // We stop the manager thread
-
+            manager.SendMessage(new Message(null, EnumMessage.EndJob));
         }
     }
 }

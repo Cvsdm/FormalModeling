@@ -64,13 +64,6 @@ namespace ProjectFM
             _manager = manager;
             Name = name;
 
-            // Initialize base variables
-            AvailableSeatInWaitingRoom = 10;
-            AvailableNurses = 5;
-            AvailableEmergencyRoom = 5;
-            AvailablePhysicians = 5;
-            NumberOfPatientInsideService = 0;
-
             // Initialize queue and semaphore
             Semaphore = new Semaphore(0, int.MaxValue);
             Queue = new ConcurrentQueue<Message>();
@@ -93,6 +86,13 @@ namespace ProjectFM
 
                 {EnumMessage.PatientLeaves, PatientLeaves}
             };
+            
+            // Initialize base variables
+            AvailableSeatInWaitingRoom = 10;
+            AvailableNurses = 5;
+            AvailableEmergencyRoom = 5;
+            AvailablePhysicians = 5;
+            NumberOfPatientInsideService = 0;
         }
 
         /**
@@ -124,7 +124,7 @@ namespace ProjectFM
             {
                 Message message;
                 Semaphore.WaitOne();
-                if (Queue.TryDequeue(out message) == true)
+                if (Queue.TryDequeue(out message))
                 {
                     Console.WriteLine("\t Service needs to do {0} for {1}", message.Type, message.Sender.Name);
                     var sender = (Patient) message.Sender;
@@ -241,28 +241,6 @@ namespace ProjectFM
         private bool PatientLeaves()
         {
             NumberOfPatientInsideService--;
-            return true;
-        }
-
-        /**
-        * Function to donate a room to the resource manager
-        */
-        private bool DonateRoomToResourceManager()
-        {
-            if (NumberOfPatientInsideService > 0)
-                return false;
-            AvailableEmergencyRoom--;
-            return true;
-        }
-
-        /**
-        * Function to donate a physician to the resource manager 
-        */
-        private bool DonatePhysicianToResourceManager()
-        {
-            if (NumberOfPatientInsideService > 0)
-                return false;
-            AvailablePhysicians--;
             return true;
         }
     }
