@@ -8,7 +8,7 @@ namespace MiniProjectFM
     {
         public string Name { get; private set; }
         public Semaphore WaitingResponse { get; set; }
-        public bool? IsDemandAccepted { get; set; }
+        public bool IsDemandAccepted { get; set; }
 
         private readonly ResourceManager _manager;
 
@@ -79,11 +79,17 @@ namespace MiniProjectFM
             ExecutorArray = new Dictionary<EnumMessage, Func<bool>>(8)
             {
                 {EnumMessage.ReleaseSeatInWaitingRoom, ReleaseSeatInWaitingRoom},
+                {EnumMessage.AskSeatInWaitingRoom, GetSeatInWaitingRoom},
+
                 {EnumMessage.AskNurse, GetNurse},
+                {EnumMessage.ReleaseNurse, ReleaseNurse},
+
                 {EnumMessage.AcquireEmergencyRoom, GetEmergencyRoom},
                 {EnumMessage.ReleaseEmergencyRoom, ReleaseEmergencyRoom},
+
                 {EnumMessage.AcquirePhysician, GetPhysician},
                 {EnumMessage.ReleasePhysician, ReleasePhysician},
+
                 {EnumMessage.PatientLeaves, PatientLeaves}
             };
         }
@@ -187,18 +193,7 @@ namespace MiniProjectFM
 
             WaitingResponse.WaitOne();
 
-            switch (IsDemandAccepted)
-            {
-                case true:
-                    // TODO : see if need smth
-                    IsDemandAccepted = null;
-                    return true;
-                case false:
-                    IsDemandAccepted = null;
-                    return false;
-                default:
-                    throw new Exception("receive null accepted demand");
-            }
+            return IsDemandAccepted;
         }
 
         /**
@@ -227,23 +222,12 @@ namespace MiniProjectFM
             // Wait for the response of the manager
             WaitingResponse.WaitOne();
 
-            switch (IsDemandAccepted)
-            {
-                case true:
-                    // TODO : see if need smth
-                    IsDemandAccepted = null;
-                    return true;
-                case false:
-                    IsDemandAccepted = null;
-                    return false;
-                default:
-                    throw new Exception("receive null accepted demand");
-            }
+            return IsDemandAccepted;
         }
 
         /**
-     * Function triggered when a physician finished his examination
-     */
+        * Function triggered when a physician finished his examination
+        */
         private bool ReleasePhysician()
         {
             AvailablePhysicians++;
@@ -251,8 +235,8 @@ namespace MiniProjectFM
         }
 
         /**
-     * Function triggered when a patient leaves
-     */
+        * Function triggered when a patient leaves
+        */
         private bool PatientLeaves()
         {
             NumberOfPatientInsideService--;
@@ -260,8 +244,8 @@ namespace MiniProjectFM
         }
 
         /**
-     * Function to donate a room to the resource manager
-     */
+        * Function to donate a room to the resource manager
+        */
         private bool DonateRoomToResourceManager()
         {
             if (NumberOfPatientInsideService > 0)
@@ -271,8 +255,8 @@ namespace MiniProjectFM
         }
 
         /**
-     * Function to donate a physician to the resource manager 
-     */
+        * Function to donate a physician to the resource manager 
+        */
         private bool DonatePhysicianToResourceManager()
         {
             if (NumberOfPatientInsideService > 0)

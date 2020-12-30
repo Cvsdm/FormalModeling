@@ -23,6 +23,10 @@ namespace MiniProjectFM
         {
             RoomBuffer = 0;
             PhysicianBuffer = 0;
+            
+            // Initialize queue and semaphore
+            Semaphore = new Semaphore(0, int.MaxValue);
+            Queue = new ConcurrentQueue<Message>();
 
             // Initialize execution function
             ExecutorArray = new Dictionary<EnumMessage, Func<bool>>(8)
@@ -37,7 +41,7 @@ namespace MiniProjectFM
         /**
          * Function uses by Services to request a additional Room 
          */
-        public bool RequestRoom()
+        private bool RequestRoom()
         {
             // Check if there is a room to give
             if (RoomBuffer <= 0) return false;
@@ -49,7 +53,7 @@ namespace MiniProjectFM
         /**
          * Function uses by Services to donate a Room 
          */
-        public bool DonateRoom()
+        private bool DonateRoom()
         {
             RoomBuffer++;
             return true;
@@ -58,7 +62,7 @@ namespace MiniProjectFM
         /**
          * Function uses by Services to request a additional Physician 
          */
-        public bool RequestPhysician()
+        private bool RequestPhysician()
         {
             // Check if there is a physician available 
             if (PhysicianBuffer <= 0) return false;
@@ -70,7 +74,7 @@ namespace MiniProjectFM
         /**
          * Function uses by Services to donate a Physician 
          */
-        public bool DonatePhysician()
+        private bool DonatePhysician()
         {
             PhysicianBuffer++;
             return true;

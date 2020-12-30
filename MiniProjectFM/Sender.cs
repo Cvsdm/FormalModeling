@@ -7,7 +7,7 @@ namespace MiniProjectFM
         string Name { get; }
         
         Semaphore WaitingResponse { get; set; }
-        bool? IsDemandAccepted { get; set; }
+        bool IsDemandAccepted { get; set; }
         
     }
 }

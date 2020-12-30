@@ -7,7 +7,7 @@ namespace MiniProjectFM
     {
         public string Name { get; private set; }
         public Semaphore WaitingResponse { get; set; }
-        public bool? IsDemandAccepted { get; set; }
+        public bool IsDemandAccepted { get; set; }
 
         private Service Service { get; set; }
 
@@ -53,19 +53,9 @@ namespace MiniProjectFM
             
             // Wait for service response
             WaitingResponse.WaitOne();
-            switch (IsDemandAccepted)
-            {
-                case true:
-                    IsDemandAccepted = null;
-                    WriteAction("was admitted");
-                    return true;
-                case false:
-                    IsDemandAccepted = null;
-                    WriteAction("was rejected");
-                    return false;
-                default:
-                    throw new Exception("receive null accepted demand");
-            }
+            
+            WriteAction(IsDemandAccepted ? "was admitted" : "was rejected");
+            return IsDemandAccepted;
         }
 
         /**
@@ -145,6 +135,8 @@ namespace MiniProjectFM
             Service.SendMessage(new Message(this, EnumMessage.ReleaseEmergencyRoom));
             WaitingResponse.WaitOne();
 
+            // Patient leaves
+            Service.SendMessage(new Message(this, EnumMessage.PatientLeaves));
             WriteAction("leaves the hospital");
         }
 
