@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ProjectFM
 {
-    public class Service : ISender
+    public class Service : ISender, IReceiver
     {
         public string Name { get; private set; }
         public Semaphore WaitingResponse { get; set; }
@@ -18,10 +18,10 @@ namespace ProjectFM
         private int AvailableEmergencyRoom { get; set; }
         private int AvailablePhysicians { get; set; }
 
-        private Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
+        public Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
 
-        private ConcurrentQueue<Message> Queue { get; set; }
-        private Semaphore Semaphore { get; set; }
+        public ConcurrentQueue<Message> Queue { get; set; }
+        public Semaphore Semaphore { get; set; }
 
         private int _numberOfPatientInsideService;
 
@@ -36,21 +36,19 @@ namespace ProjectFM
 
                 // If the service is empty
                 // Check if there is some free Rooms
-                while (AvailableEmergencyRoom > 1)
+                if (AvailableEmergencyRoom > 0)
                 {
-                    // Give Room to ResourceManager
-                    _manager.SendMessage(new Message(this, EnumMessage.DonateEmergencyRoom));
-                    WaitingResponse.WaitOne();
-                    AvailableEmergencyRoom--;
+                    // Start thread to give a room to the manager
+                    var threadDonateRoom = new Thread(DonateRoom);
+                    threadDonateRoom.Start();
                 }
 
                 // Check if there is some free Physicians
-                while (AvailablePhysicians > 1)
+                if (AvailablePhysicians > 0)
                 {
-                    // Give Physician to ResourceManager
-                    _manager.SendMessage(new Message(this, EnumMessage.DonatePhysician));
-                    WaitingResponse.WaitOne();
-                    AvailablePhysicians--;
+                    // Start thread to give a physician to the manager
+                    var threadDonatePhysician = new Thread(DonatePhysician);
+                    threadDonatePhysician.Start();
                 }
             }
         }
@@ -86,7 +84,7 @@ namespace ProjectFM
 
                 {EnumMessage.PatientLeaves, PatientLeaves}
             };
-            
+
             // Initialize base variables
             AvailableSeatInWaitingRoom = 10;
             AvailableNurses = 5;
@@ -126,7 +124,7 @@ namespace ProjectFM
                 Semaphore.WaitOne();
                 if (Queue.TryDequeue(out message))
                 {
-                    Console.WriteLine("\t Service needs to do {0} for {1}", message.Type, message.Sender.Name);
+                    Console.WriteLine("{0} needs to {1} for {2}", Name, message.Type, message.Sender.Name);
                     var sender = (Patient) message.Sender;
                     if (message.Type == EnumMessage.EndJob)
                         return;
@@ -242,6 +240,38 @@ namespace ProjectFM
         {
             NumberOfPatientInsideService--;
             return true;
+        }
+
+        private void DonateRoom()
+        {
+            // Wait before donating
+            Thread.Sleep(15000);
+
+            // Check if there is still rooms free
+            if (AvailableEmergencyRoom <= 0) return;
+
+            // Give Rooms to ResourceManager
+            while (AvailableEmergencyRoom > 1)
+            {
+                _manager.SendMessage(new Message(this, EnumMessage.DonateEmergencyRoom));
+                WaitingResponse.WaitOne();
+                AvailableEmergencyRoom--;
+            }
+            
+        }
+
+        private void DonatePhysician()
+        {
+            // Wait before donating
+            Thread.Sleep(15000);
+
+            // Give Physician to ResourceManager
+            while (AvailablePhysicians > 1)
+            {
+                _manager.SendMessage(new Message(this, EnumMessage.DonatePhysician));
+                WaitingResponse.WaitOne();
+                AvailablePhysicians--;
+            }
         }
     }
 }
