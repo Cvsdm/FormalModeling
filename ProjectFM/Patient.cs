@@ -30,7 +30,12 @@ namespace ProjectFM
         {
             Arrives();
             if (EnterWaitingRoom() == false)
+            {
+                
+                Thread.Sleep(5000);
                 return;
+            }
+
             NurseStartProcessPaperwork();
             NurseEndProcessPaperwork();
             EnterEmergencyRoom();
@@ -48,14 +53,14 @@ namespace ProjectFM
 
         private bool EnterWaitingRoom()
         {
-            // wait for the patient to check in - we consider 5 minutes so here 5 sec
-            Thread.Sleep(5000);
+            // wait for the patient to check in
+            Thread.Sleep(2000);
 
             // check if the patient can enter the WR or not
             Service.SendMessage(new Message(this, EnumMessage.AskSeatInWaitingRoom));
             
             // Wait for service response
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(10000);
             
             WriteAction(IsDemandAccepted ? "was admitted" : "was rejected");
             return IsDemandAccepted;
@@ -67,7 +72,7 @@ namespace ProjectFM
         private void NurseStartProcessPaperwork()
         {
             WriteAction("is starting to fill his paperwork");
-            // wait for the patient to fill out paperwork - we consider 5 minutes so here 5 sec
+            // wait for the patient to fill out paperwork
             Thread.Sleep(5000);
             WriteAction("finished his paperwork");
             
@@ -75,7 +80,7 @@ namespace ProjectFM
             // wait for a nurse to be available
             // acquire a nurse
             Service.SendMessage(new Message(this, EnumMessage.AskNurse));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(10000);
             WriteAction("- the nurse start to process his paperwork");
         }
 
@@ -84,12 +89,12 @@ namespace ProjectFM
          */
         private void NurseEndProcessPaperwork()
         {
-            // wait for the nurse to finish processing the paperwork - we consider 5 minutes so here 5 sec
+            // wait for the nurse to finish processing the paperwork
             Thread.Sleep(5000);
 
             // liberate a nurse
             Service.SendMessage(new Message(this, EnumMessage.ReleaseNurse));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(10000);
             WriteAction("- the nurse has finished to process his paperwork");
         }
 
@@ -102,7 +107,7 @@ namespace ProjectFM
             // acquire the ER resource
             WriteAction("waits for a free ER");
             Service.SendMessage(new Message(this, EnumMessage.AcquireEmergencyRoom));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(60000);
 
             WriteAction("enters the ER");
         }
@@ -116,7 +121,7 @@ namespace ProjectFM
             // acquire the resource
             WriteAction("waits for a physician");
             Service.SendMessage(new Message(this, EnumMessage.AcquirePhysician));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(15000);
 
             WriteAction("starts to be examined");
         }
@@ -132,11 +137,11 @@ namespace ProjectFM
 
             // release the resource Physician
             Service.SendMessage(new Message(this, EnumMessage.ReleasePhysician));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(30000);
             
             // release the resource ER
             Service.SendMessage(new Message(this, EnumMessage.ReleaseEmergencyRoom));
-            WaitingResponse.WaitOne();
+            WaitingResponse.WaitOne(30000);
 
             // Patient leaves
             Service.SendMessage(new Message(this, EnumMessage.PatientLeaves));

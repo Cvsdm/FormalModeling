@@ -15,7 +15,10 @@ namespace ProjectFM
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("Welcome into the emergency room - You will enter our simulation");
+            Console.WriteLine("------------------------------------------------------------------------------");
+            Console.WriteLine("------ Welcome into the emergency room - You will enter our simulation -------");
+            Console.WriteLine("-- Your simulated time is one second correspond to one minute in real life. --");
+            Console.WriteLine("------------------------------------------------------------------------------");
             var rand = new Random();
 
             // Create the manager thread
