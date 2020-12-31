@@ -5,16 +5,16 @@ using System.Threading;
 
 namespace ProjectFM
 {
-    public class ResourceManager
+    public class ResourceManager: IReceiver
     {
         private int RoomBuffer { get; set; }
         private int PhysicianBuffer { get; set; }
 
-        private Semaphore Semaphore { get; set; }
+        public Semaphore Semaphore { get; set; }
 
-        private Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
+        public Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
 
-        private ConcurrentQueue<Message> Queue { get; set; }
+        public ConcurrentQueue<Message> Queue { get; set; }
 
         /**
          * Constructor of Resource Manager
