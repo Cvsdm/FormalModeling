@@ -1,7 +1,7 @@
 ﻿namespace ProjectFM
 {
     /**
-     * Class used to simulate a message sent between Services and the Resource Manager
+     * Class used to simulate a message sent between Services and the Resource Provider
      */
     public class Message
     {

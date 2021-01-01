@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ProjectFM
 {
-    public class ResourceManager: IReceiver
+    public class ResourceProvider: IReceiver
     {
         private int RoomBuffer { get; set; }
         private int PhysicianBuffer { get; set; }
@@ -17,9 +17,9 @@ namespace ProjectFM
         public ConcurrentQueue<Message> Queue { get; set; }
 
         /**
-         * Constructor of Resource Manager
+         * Constructor of Resource Provider
          */
-        public ResourceManager()
+        public ResourceProvider()
         {
             RoomBuffer = 0;
             PhysicianBuffer = 0;
@@ -81,7 +81,7 @@ namespace ProjectFM
         }
 
         /**
-         * Function used by services to send a message to the manager
+         * Function used by services to send a message to the provider
          */
         public void SendMessage(Message message)
         {
@@ -111,7 +111,7 @@ namespace ProjectFM
                 Semaphore.WaitOne();
                 if (Queue.TryDequeue(out message))
                 {
-                    Console.WriteLine("\t Manager needs to do {0} for {1}", message.Type, message.Sender.Name);
+                    Console.WriteLine("\t Provider needs to do {0} for {1}", message.Type, message.Sender.Name);
                     if (message.Type == EnumMessage.EndJob)
                         return;
                     ExecutorFunction(message.Type, message.Sender);

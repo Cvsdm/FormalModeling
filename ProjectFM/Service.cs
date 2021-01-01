@@ -11,7 +11,7 @@ namespace ProjectFM
         public Semaphore WaitingResponse { get; set; }
         public bool IsDemandAccepted { get; set; }
 
-        private readonly ResourceManager _manager;
+        private readonly ResourceProvider _provider;
 
         private int AvailableSeatInWaitingRoom { get; set; }
         private int AvailableNurses { get; set; }
@@ -38,7 +38,7 @@ namespace ProjectFM
                 // Check if there is some free Rooms
                 if (AvailableEmergencyRoom > 0)
                 {
-                    // Start thread to give a room to the manager
+                    // Start thread to give a room to the provider
                     var threadDonateRoom = new Thread(DonateRoom);
                     threadDonateRoom.Start();
                 }
@@ -46,7 +46,7 @@ namespace ProjectFM
                 // Check if there is some free Physicians
                 if (AvailablePhysicians > 0)
                 {
-                    // Start thread to give a physician to the manager
+                    // Start thread to give a physician to the provider
                     var threadDonatePhysician = new Thread(DonatePhysician);
                     threadDonatePhysician.Start();
                 }
@@ -57,9 +57,9 @@ namespace ProjectFM
         /**
          * Constructor of Service 
          */
-        public Service(ResourceManager manager, string name)
+        public Service(ResourceProvider provider, string name)
         {
-            _manager = manager;
+            _provider = provider;
             Name = name;
 
             // Initialize queue and semaphore
@@ -187,8 +187,8 @@ namespace ProjectFM
                 return true;
             }
 
-            // Check if the Resource Manager has a room for us
-            _manager.SendMessage(new Message(this, EnumMessage.RequestEmergencyRoom));
+            // Check if the Resource Provider has a room for us
+            _provider.SendMessage(new Message(this, EnumMessage.RequestEmergencyRoom));
 
             WaitingResponse.WaitOne();
 
@@ -215,10 +215,10 @@ namespace ProjectFM
                 return true;
             }
 
-            // No physician is available in the service Thus we can ask the resource manager
-            _manager.SendMessage(new Message(this, EnumMessage.RequestPhysician));
+            // No physician is available in the service Thus we can ask the resource provider
+            _provider.SendMessage(new Message(this, EnumMessage.RequestPhysician));
 
-            // Wait for the response of the manager
+            // Wait for the response of the provider
             WaitingResponse.WaitOne();
 
             return IsDemandAccepted;
@@ -250,10 +250,10 @@ namespace ProjectFM
             // Check if there is still rooms free
             if (AvailableEmergencyRoom <= 0) return;
 
-            // Give Rooms to ResourceManager
+            // Give Rooms to ResourceProvider
             while (AvailableEmergencyRoom > 1)
             {
-                _manager.SendMessage(new Message(this, EnumMessage.DonateEmergencyRoom));
+                _provider.SendMessage(new Message(this, EnumMessage.DonateEmergencyRoom));
                 WaitingResponse.WaitOne();
                 AvailableEmergencyRoom--;
             }
@@ -265,10 +265,10 @@ namespace ProjectFM
             // Wait before donating
             Thread.Sleep(15000);
 
-            // Give Physician to ResourceManager
+            // Give Physician to ResourceProvider
             while (AvailablePhysicians > 1)
             {
-                _manager.SendMessage(new Message(this, EnumMessage.DonatePhysician));
+                _provider.SendMessage(new Message(this, EnumMessage.DonatePhysician));
                 WaitingResponse.WaitOne();
                 AvailablePhysicians--;
             }

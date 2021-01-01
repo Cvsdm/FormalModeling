@@ -21,16 +21,16 @@ namespace ProjectFM
             Console.WriteLine("\t------------------------------------------------------------------------------\n\n");
             var rand = new Random();
 
-            // Create the manager thread
-            var manager = new ResourceManager();
-            var managerThread = new Thread(manager.Loop) {Name = "Manager"};
-            managerThread.Start();
+            // Create the provider thread
+            var provider = new ResourceProvider();
+            var providerThread = new Thread(provider.Loop) {Name = "Provider"};
+            providerThread.Start();
             
             // Create the services threads
             Service[] services =
             {
-                new Service(manager, "Service réanimation n°1"),
-                new Service(manager, "Service réanimation n°1"),
+                new Service(provider, "Service réanimation n°1"),
+                new Service(provider, "Service réanimation n°1"),
             };
             foreach (var service in services)
             {
@@ -64,8 +64,8 @@ namespace ProjectFM
                 service.SendMessage(new Message(null, EnumMessage.EndJob));
             }
             
-            // We stop the manager thread
-            manager.SendMessage(new Message(null, EnumMessage.EndJob));
+            // We stop the provider thread
+            provider.SendMessage(new Message(null, EnumMessage.EndJob));
         }
     }
 }
