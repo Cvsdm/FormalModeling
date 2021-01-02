@@ -13,5 +13,9 @@ namespace ProjectFM
         Semaphore Semaphore { get; set; }
 
         void SendMessage(Message message);
+
+        void ExecutorFunction(EnumMessage type, ISender sender);
+
+        void Loop();
     }
 }

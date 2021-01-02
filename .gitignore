@@ -4,3 +4,6 @@
 #CSharp folders
 bin/
 obj/
+
+#config vscode
+.vscode/

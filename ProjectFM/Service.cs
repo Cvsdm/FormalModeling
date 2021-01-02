@@ -7,21 +7,23 @@ namespace ProjectFM
 {
     public class Service : ISender, IReceiver
     {
+        // ISender
         public string Name { get; private set; }
         public Semaphore WaitingResponse { get; set; }
         public bool IsDemandAccepted { get; set; }
 
+        // IReceiver
+        public Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
+        public ConcurrentQueue<Message> Queue { get; set; }
+        public Semaphore Semaphore { get; set; }
+
+        // other attributes
         private readonly ResourceProvider _provider;
 
         private int AvailableSeatInWaitingRoom { get; set; }
         private int AvailableNurses { get; set; }
         private int AvailableEmergencyRoom { get; set; }
         private int AvailablePhysicians { get; set; }
-
-        public Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
-
-        public ConcurrentQueue<Message> Queue { get; set; }
-        public Semaphore Semaphore { get; set; }
 
         private int _numberOfPatientInsideService;
 
@@ -102,7 +104,7 @@ namespace ProjectFM
             Semaphore.Release();
         }
 
-        private void ExecutorFunction(EnumMessage type, ISender sender)
+        public void ExecutorFunction(EnumMessage type, ISender sender)
         {
             // launch the function corresponding to the type of message
             var result = ExecutorArray[type]();

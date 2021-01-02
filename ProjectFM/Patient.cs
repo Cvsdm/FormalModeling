@@ -5,10 +5,12 @@ namespace ProjectFM
 {
     public class Patient: ISender
     {
+        // ISender
         public string Name { get; private set; }
         public Semaphore WaitingResponse { get; set; }
         public bool IsDemandAccepted { get; set; }
 
+        // other attributes
         private Service Service { get; set; }
 
         /**

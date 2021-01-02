@@ -10,6 +10,7 @@ namespace ProjectFM
         private int RoomBuffer { get; set; }
         private int PhysicianBuffer { get; set; }
 
+        // IReceiver
         public Semaphore Semaphore { get; set; }
 
         public Dictionary<EnumMessage, Func<bool>> ExecutorArray { get; set; }
@@ -89,7 +90,7 @@ namespace ProjectFM
             Semaphore.Release();
         }
 
-        private void ExecutorFunction(EnumMessage type, ISender sender)
+        public void ExecutorFunction(EnumMessage type, ISender sender)
         {
             // launch the function corresponding to the type of message
             var result = ExecutorArray[type]();
