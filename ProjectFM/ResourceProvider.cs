@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ProjectFM
 {
-    public class ResourceProvider: IReceiver
+    public class ResourceProvider : IReceiver
     {
         private int RoomBuffer { get; set; }
         private int PhysicianBuffer { get; set; }
@@ -23,7 +23,7 @@ namespace ProjectFM
         {
             RoomBuffer = 0;
             PhysicianBuffer = 0;
-            
+
             // Initialize queue and semaphore
             Semaphore = new Semaphore(0, int.MaxValue);
             Queue = new ConcurrentQueue<Message>();
@@ -88,7 +88,7 @@ namespace ProjectFM
             Queue.Enqueue(message);
             Semaphore.Release();
         }
-        
+
         private void ExecutorFunction(EnumMessage type, ISender sender)
         {
             // launch the function corresponding to the type of message
@@ -98,7 +98,7 @@ namespace ProjectFM
             sender.IsDemandAccepted = result;
             sender.WaitingResponse.Release();
         }
-        
+
 
         /**
          * Loop function to listen to events
@@ -111,9 +111,10 @@ namespace ProjectFM
                 Semaphore.WaitOne();
                 if (Queue.TryDequeue(out message))
                 {
-                    Console.WriteLine("\t Provider needs to do {0} for {1}", message.Type, message.Sender.Name);
                     if (message.Type == EnumMessage.EndJob)
                         return;
+
+                    Console.WriteLine("\t Provider needs to do {0} for {1}", message.Type, message.Sender.Name);
                     ExecutorFunction(message.Type, message.Sender);
                 }
             }

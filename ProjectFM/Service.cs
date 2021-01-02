@@ -124,10 +124,11 @@ namespace ProjectFM
                 Semaphore.WaitOne();
                 if (Queue.TryDequeue(out message))
                 {
-                    Console.WriteLine("{0} needs to {1} for {2}", Name, message.Type, message.Sender.Name);
-                    var sender = (Patient) message.Sender;
                     if (message.Type == EnumMessage.EndJob)
                         return;
+
+                    Console.WriteLine("{0} needs to {1} for {2}", Name, message.Type, message.Sender.Name);
+                    var sender = (Patient) message.Sender;
                     ExecutorFunction(message.Type, sender);
                 }
             }
@@ -257,7 +258,6 @@ namespace ProjectFM
                 WaitingResponse.WaitOne();
                 AvailableEmergencyRoom--;
             }
-            
         }
 
         private void DonatePhysician()

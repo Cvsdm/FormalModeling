@@ -145,6 +145,7 @@ namespace ProjectFM
 
             // Patient leaves
             Service.SendMessage(new Message(this, EnumMessage.PatientLeaves));
+            WaitingResponse.WaitOne();
             WriteAction("leaves the hospital");
         }
 
